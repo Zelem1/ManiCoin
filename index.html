@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManiCoin - Grow Your Crypto Fruits!</title>
+    <style>
+        :root {
+            --neon-green: #0f0;
+            --neon-purple: #b10fff;
+            --neon-blue: #00a8ff;
+            --dark-bg: #121212;
+            --darker-bg: #0a0a0a;
+            --text: #e0e0e0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--neon-purple);
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+        .user-balance {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        .auth-form {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background: var(--darker-bg);
+            border: 1px solid var(--neon-purple);
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(177, 15, 255, 0.2);
+        }
+        .project-description {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border-left: 3px solid var(--neon-green);
+        }
+        .auth-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #222;
+            border: 1px solid #333;
+            color: var(--text);
+            border-radius: 5px;
+        }
+        .auth-form button {
+            background: var(--neon-purple);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .auth-form button:hover {
+            background: #8a00bf;
+            box-shadow: 0 0 10px var(--neon-purple);
+        }
+        .tree-container {
+            text-align: center;
+            margin-top: 30px;
+            position: relative;
+        }
+        .tree-svg {
+            width: 250px;
+            height: 400px;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.5));
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px #000;
+        }
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-green), #7cfc00);
+            width: 0%;
+            transition: width 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                          transparent, 
+                          rgba(255, 255, 255, 0.3), 
+                          transparent);
+            animation: shine 2s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .water-btn {
+            background: var(--neon-purple);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(177, 15, 255, 0.5);
+        }
+        .water-btn:hover {
+            background: #8a00bf;
+            box-shadow: 0 0 15px var(--neon-purple);
+            transform: scale(1.05);
+        }
+        .water-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .fruit {
+            position: absolute;
+            color: gold;
+            font-weight: bold;
+            font-size: 24px;
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.7);
+            animation: float 3s infinite ease-in-out;
+            z-index: 10;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        .tab-container {
+            display: flex;
+            margin: 20px 0;
+            border-bottom: 1px solid #333;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .tab:hover {
+            background: #222;
+        }
+        .tab.active {
+            background: var(--neon-purple);
+            color: white;
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--neon-green);
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 0 5px 5px 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .boost-card {
+            background: #252525;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #444;
+            transition: all 0.3s;
+        }
+        .boost-card:hover {
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+        }
+        .boost-card h3 {
+            color: var(--neon-green);
+            margin-top: 0;
+        }
+        .boost-card button {
+            background: var(--neon-green);
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .boost-card button:hover {
+            background: #7cfc00;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        .token-purchase {
+            background: #252525;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 25px 0;
+            border: 1px solid gold;
+        }
+        .token-purchase h3 {
+            color: gold;
+            margin-top: 0;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+        .modal-content {
+            background: var(--darker-bg);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid var(--neon-purple);
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 20px rgba(177, 15, 255, 0.3);
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: var(--neon-green);
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background: #222;
+            border: 1px solid #333;
+            color: var(--text);
+            border-radius: 5px;
+        }
+        .modal-content button {
+            background: var(--neon-purple);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+            transition: all 0.3s;
+        }
+        .modal-content button:hover {
+            background: #8a00bf;
+            box-shadow: 0 0 10px var(--neon-purple);
+        }
+        #next-water {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 10px;
+        }
+        #wallet-address {
+            font-family: monospace;
+        }
+        .ref-code-box {
+            background: #252525;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .payment-address {
+            background: #252525;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            word-break: break-all;
+            font-family: monospace;
+        }
+        .exodus-logo {
+            height: 24px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Page -->
+    <div id="auth-page" class="container">
+        <div class="auth-form">
+            <h1 style="color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green);">ManiCoin</h1>
+            <div id="login-form">
+                <input type="text" id="login-username" placeholder="Username">
+                <input type="password" id="login-password" placeholder="Password">
+                <button id="login-btn">Login</button>
+                <p>Don't have an account? <a href="#" id="show-register" style="color: var(--neon-purple);">Register</a></p>
+            </div>
+            <div id="register-form" style="display: none;">
+                <input type="text" id="reg-username" placeholder="Username">
+                <input type="password" id="reg-password" placeholder="Password">
+                <input type="text" id="ref-code" placeholder="Referral code (optional)">
+                <button id="register-btn">Register</button>
+                <p>Already have an account? <a href="#" id="show-login" style="color: var(--neon-purple);">Login</a></p>
+            </div>
+            
+            <div class="project-description">
+                <h3>About ManiCoin</h3>
+                <p>ManiCoin is a unique crypto farming game where you grow digital fruits (represented by "m" tokens) on your virtual tree. Harvest fruits, trade them with other players, and boost your growth with special upgrades.</p>
+                <p>Key features:</p>
+                <ul>
+                    <li>Grow your tree and harvest ManiCoins</li>
+                    <li>Trade tokens with other players</li>
+                    <li>Purchase speed boosts</li>
+                    <li>Earn bonuses through referrals</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Page -->
+    <div id="main-page" class="container" style="display: none;">
+        <header>
+            <div class="logo">ManiCoin</div>
+            <div class="user-balance">Balance: <span id="balance">0</span> MC</div>
+        </header>
+
+        <div class="tab-container">
+            <button class="tab active" data-tab="tree">Tree</button>
+            <button class="tab" data-tab="market">Market</button>
+            <button class="tab" data-tab="boosts">Boosts</button>
+            <button class="tab" data-tab="ref">Referrals</button>
+        </div>
+
+        <div class="tab-content active" id="tree-tab">
+            <div class="tree-container">
+                <h2 style="color: var(--neon-green);">Your ManiCoin Tree</h2>
+                
+                <!-- SVG Tree -->
+                <svg class="tree-svg" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M90 250 L110 250 L105 320 L95 320 Z" fill="#5e2c04" />
+                    <path d="M95 250 L105 250 L100 280 Z" fill="#4a2303" />
+                    
+                    <defs>
+                        <radialGradient id="leavesGradient" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+                            <stop offset="0%" stop-color="#0a5c36" />
+                            <stop offset="100%" stop-color="#0d7745" />
+                        </radialGradient>
+                    </defs>
+                    
+                    <ellipse cx="100" cy="180" rx="60" ry="80" fill="url(#leavesGradient)" />
+                    
+                    <path d="M60 150 Q80 130 100 150 Q120 130 140 150" stroke="#1e8a53" stroke-width="1" fill="none" />
+                    <path d="M70 170 Q90 150 110 170 Q130 150 150 170" stroke="#1e8a53" stroke-width="1" fill="none" />
+                    <path d="M50 190 Q70 170 90 190 Q110 170 130 190" stroke="#1e8a53" stroke-width="1" fill="none" />
+                    
+                    <ellipse cx="100" cy="320" rx="30" ry="10" fill="#000" opacity="0.2" />
+                </svg>
+                
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <p>Progress: <span id="progress-text">0</span>%</p>
+                <button id="water-btn" class="water-btn">Water Tree 🌱</button>
+                <p id="next-water">Next watering in: <span id="water-time">24 hours</span></p>
+                
+                <div id="fruits-container" style="position: relative; height: 200px;"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="market-tab">
+            <h2 style="color: var(--neon-green);">ManiCoin Market</h2>
+            <p>Sell your tokens to other players for USDT or other cryptocurrencies.</p>
+            
+            <div class="boost-card">
+                <h3>Sell 1 MC</h3>
+                <input type="text" id="sell-price" placeholder="Price (e.g.: 5 USDT)">
+                <input type="text" id="wallet-address" placeholder="Your crypto wallet">
+                <button id="sell-btn">List for Sale</button>
+            </div>
+            
+            <div class="boost-card">
+                <h3>Active Offers</h3>
+                <p id="no-offers">No active offers available.</p>
+                <div id="offers-list"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="boosts-tab">
+            <h2 style="color: var(--neon-green);">Speed Boosts</h2>
+            <p>Increase your tree's growth speed!</p>
+            
+            <div class="boost-card">
+                <h3>⚡ 5x Boost</h3>
+                <p>Each watering gives <strong>2.5%</strong> instead of 0.5%</p>
+                <p>Price: <strong>$5</strong></p>
+                <button id="buy-boost-5">Buy for $5</button>
+            </div>
+            
+            <div class="boost-card">
+                <h3>🚀 10x Boost</h3>
+                <p>Each watering gives <strong>5%</strong> instead of 0.5%</p>
+                <p>Price: <strong>$10</strong></p>
+                <button id="buy-boost-10">Buy for $10</button>
+            </div>
+            
+            <div class="token-purchase">
+                <h3>💰 Buy ManiCoins Directly</h3>
+                <p>Purchase 1 MC token for <strong>$99</strong></p>
+                <button id="buy-token-btn">Buy 1 MC for $99</button>
+                <p>Immediate delivery to your balance</p>
+            </div>
+            
+            <button id="deposit-btn" class="water-btn" style="margin-top: 20px;">Deposit Funds 💰</button>
+        </div>
+
+        <div class="tab-content" id="ref-tab">
+            <h2 style="color: var(--neon-green);">Referral Program</h2>
+            <p>Invite friends and earn speed bonuses!</p>
+            
+            <div class="boost-card">
+                <p>Your referral code:</p>
+                <div class="ref-code-box">
+                    <strong id="ref-code-display">XXXXXX</strong>
+                </div>
+                <p>Friends invited: <strong id="ref-count">0</strong></p>
+                <p>Current speed bonus: <strong id="ref-boost">+0x</strong></p>
+            </div>
+            
+            <div class="boost-card">
+                <h3>How it works?</h3>
+                <p>1. Share your referral code with friends</p>
+                <p>2. Get <strong>+0.5x</strong> speed for each friend</p>
+                <p>3. Maximum bonus: <strong>+5x</strong> (10 friends)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div id="deposit-modal" class="modal">
+        <div class="modal-content">
+            <h2>Deposit Funds</h2>
+            
+            <div style="margin-bottom: 20px;">
+                <h3>Send payment to Exodus wallet:</h3>
+                <img src="https://assets.exodus.com/web3-assets/exodus-logo.svg" class="exodus-logo" alt="Exodus">
+                <div class="payment-address">
+                    <strong>bc1qzfgqz9rxhmydyx8q8edxmxl0995senpwg9gsql</strong>
+                </div>
+                <p>Network: Bitcoin (BTC)</p>
+            </div>
+            
+            <p>After payment, upload transaction screenshot:</p>
+            <input type="file" id="screenshot" style="margin: 10px 0;">
+            <div style="display: flex; justify-content: space-between;">
+                <button id="submit-deposit">Confirm</button>
+                <button id="close-deposit" style="background: #555;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Token Purchase Modal -->
+    <div id="token-modal" class="modal">
+        <div class="modal-content">
+            <h2>Purchase ManiCoin Token</h2>
+            <p>You are about to purchase <strong>1 MC token</strong> for <strong>$99</strong></p>
+            
+            <div style="margin-bottom: 20px;">
+                <h3>Send payment to Exodus wallet:</h3>
+                <img src="https://assets.exodus.com/web3-assets/exodus-logo.svg" class="exodus-logo" alt="Exodus">
+                <div class="payment-address">
+                    <strong>bc1qzfgqz9rxhmydyx8q8edxmxl0995senpwg9gsql</strong>
+                </div>
+                <p>Network: Bitcoin (BTC)</p>
+            </div>
+            
+            <p>After payment, upload transaction screenshot:</p>
+            <input type="file" id="token-screenshot" style="margin: 10px 0;">
+            <div style="display: flex; justify-content: space-between;">
+                <button id="confirm-token-purchase">Confirm Purchase</button>
+                <button id="close-token-modal" style="background: #555;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User data
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+        let treeProgress = 0;
+        let lastWatered = 0;
+        let boost = 1;
+        let refBoost = 0;
+        let balance = 0;
+        let fruits = 0;
+
+        // DOM elements
+        const authPage = document.getElementById('auth-page');
+        const mainPage = document.getElementById('main-page');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const showRegister = document.getElementById('show-register');
+        const showLogin = document.getElementById('show-login');
+        const loginBtn = document.getElementById('login-btn');
+        const registerBtn = document.getElementById('register-btn');
+        const waterBtn = document.getElementById('water-btn');
+        const progressBar = document.getElementById('progress');
+        const progressText = document.getElementById('progress-text');
+        const nextWater = document.getElementById('water-time');
+        const fruitsContainer = document.getElementById('fruits-container');
+        const balanceDisplay = document.getElementById('balance');
+        const depositModal = document.getElementById('deposit-modal');
+        const depositBtn = document.getElementById('deposit-btn');
+        const closeDeposit = document.getElementById('close-deposit');
+        const buyBoost5 = document.getElementById('buy-boost-5');
+        const buyBoost10 = document.getElementById('buy-boost-10');
+        const buyTokenBtn = document.getElementById('buy-token-btn');
+        const refCodeDisplay = document.getElementById('ref-code-display');
+        const refCount = document.getElementById('ref-count');
+        const refBoostDisplay = document.getElementById('ref-boost');
+        const tokenModal = document.getElementById('token-modal');
+        const closeTokenModal = document.getElementById('close-token-modal');
+        const confirmTokenPurchase = document.getElementById('confirm-token-purchase');
+
+        // Show/hide forms
+        showRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+        });
+
+        showLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            registerForm.style.display = 'none';
+            loginForm.style.display = 'block';
+        });
+
+        // Registration
+        registerBtn.addEventListener('click', () => {
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const refCode = document.getElementById('ref-code').value;
+
+            if (username && password) {
+                if (users.some(u => u.username === username)) {
+                    alert('Username already taken!');
+                    return;
+                }
+
+                const newUser = {
+                    username,
+                    password,
+                    balance: 0,
+                    treeProgress: 0,
+                    lastWatered: 0,
+                    boost: 1,
+                    refCode: generateRefCode(),
+                    refCount: 0,
+                    refBoost: 0,
+                    fruits: 0
+                };
+
+                if (refCode) {
+                    const referrer = users.find(u => u.refCode === refCode);
+                    if (referrer) {
+                        referrer.refCount++;
+                        referrer.refBoost = Math.min(referrer.refCount * 0.5, 5);
+                        localStorage.setItem('users', JSON.stringify(users));
+                    }
+                }
+
+                users.push(newUser);
+                localStorage.setItem('users', JSON.stringify(users));
+                alert('Registration successful! Please login.');
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                alert('Please fill all fields!');
+            }
+        });
+
+        // Login
+        loginBtn.addEventListener('click', () => {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            const user = users.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = user;
+                authPage.style.display = 'none';
+                mainPage.style.display = 'block';
+                loadUserData();
+            } else {
+                alert('Invalid username or password!');
+            }
+        });
+
+        // Load user data
+        function loadUserData() {
+            treeProgress = currentUser.treeProgress || 0;
+            lastWatered = currentUser.lastWatered || 0;
+            boost = currentUser.boost || 1;
+            refBoost = currentUser.refBoost || 0;
+            balance = currentUser.balance || 0;
+            fruits = currentUser.fruits || 0;
+
+            updateProgress();
+            updateBalance();
+            updateRefInfo();
+            checkWaterTime();
+            renderFruits();
+        }
+
+        // Check watering time
+        function checkWaterTime() {
+            const now = Date.now();
+            const timePassed = now - lastWatered;
+            const hoursPassed = timePassed / (1000 * 60 * 60);
+
+            if (hoursPassed < 24) {
+                waterBtn.disabled = true;
+                const hoursLeft = 24 - hoursPassed;
+                updateWaterTimer(hoursLeft);
+            } else {
+                waterBtn.disabled = false;
+                document.getElementById('water-time').textContent = 'ready to water now!';
+            }
+        }
+
+        // Update water timer
+        function updateWaterTimer(hoursLeft) {
+            const hours = Math.floor(hoursLeft);
+            const minutes = Math.floor((hoursLeft - hours) * 60);
+            
+            if (hours > 0) {
+                document.getElementById('water-time').textContent = `${hours}h ${minutes}m`;
+            } else {
+                document.getElementById('water-time').textContent = `${minutes} minutes`;
+            }
+            
+            if (hoursLeft <= 0) {
+                waterBtn.disabled = false;
+                document.getElementById('water-time').textContent = 'ready to water now!';
+            } else {
+                setTimeout(() => {
+                    updateWaterTimer(hoursLeft - 0.0166667);
+                }, 60000);
+            }
+        }
+
+        // Water tree
+        waterBtn.addEventListener('click', () => {
+            const now = Date.now();
+            lastWatered = now;
+            currentUser.lastWatered = now;
+
+            waterBtn.textContent = 'Watering...';
+            waterBtn.disabled = true;
+            
+            setTimeout(() => {
+                const progressPerWater = 0.5 * (boost + refBoost);
+                treeProgress += progressPerWater;
+                
+                if (treeProgress >= 100) {
+                    treeProgress = 0;
+                    balance += 1;
+                    fruits += 1;
+                    currentUser.balance = balance;
+                    currentUser.fruits = fruits;
+                    updateBalance();
+                    addFruit();
+                }
+
+                currentUser.treeProgress = treeProgress;
+                saveUserData();
+                updateProgress();
+                
+                waterBtn.textContent = 'Water Tree 🌱';
+                document.getElementById('water-time').textContent = '24 hours';
+                checkWaterTime();
+                
+                const progress = document.querySelector('.progress');
+                progress.style.animation = 'none';
+                void progress.offsetWidth;
+                progress.style.animation = 'shine 2s infinite';
+            }, 1000);
+        });
+
+        // Update progress
+        function updateProgress() {
+            progressBar.style.width = `${treeProgress}%`;
+            progressText.textContent = treeProgress.toFixed(1);
+        }
+
+        // Update balance
+        function updateBalance() {
+            balanceDisplay.textContent = balance;
+        }
+
+        // Add fruit
+        function addFruit() {
+            const fruit = document.createElement('div');
+            fruit.className = 'fruit';
+            fruit.textContent = 'm';
+            
+            const x = Math.random() * 200 - 20;
+            const y = Math.random() * 150 + 50;
+            
+            fruit.style.left = `${x}px`;
+            fruit.style.top = `${y}px`;
+            
+            fruit.style.opacity = '0';
+            fruit.style.transform = 'scale(0)';
+            
+            fruitsContainer.appendChild(fruit);
+            
+            setTimeout(() => {
+                fruit.style.opacity = '1';
+                fruit.style.transform = 'scale(1)';
+            }, 10);
+        }
+
+        // Render existing fruits
+        function renderFruits() {
+            fruitsContainer.innerHTML = '';
+            for (let i = 0; i < fruits; i++) {
+                addFruit();
+            }
+        }
+
+        // Save user data
+        function saveUserData() {
+            const index = users.findIndex(u => u.username === currentUser.username);
+            if (index !== -1) {
+                users[index] = currentUser;
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+        }
+
+        // Generate referral code
+        function generateRefCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        // Update referral info
+        function updateRefInfo() {
+            refCodeDisplay.textContent = currentUser.refCode;
+            refCount.textContent = currentUser.refCount;
+            refBoostDisplay.textContent = `+${currentUser.refBoost}x`;
+        }
+
+        // Deposit modal
+        depositBtn.addEventListener('click', () => {
+            depositModal.style.display = 'flex';
+        });
+
+        closeDeposit.addEventListener('click', () => {
+            depositModal.style.display = 'none';
+        });
+
+        // Buy boosts
+        buyBoost5.addEventListener('click', () => {
+            if (confirm('Buy 5x boost for $5?\nYou will receive payment instructions after confirmation.')) {
+                depositModal.style.display = 'flex';
+            }
+        });
+
+        buyBoost10.addEventListener('click', () => {
+            if (confirm('Buy 10x boost for $10?\nYou will receive payment instructions after confirmation.')) {
+                depositModal.style.display = 'flex';
+            }
+        });
+
+        // Token purchase
+        buyTokenBtn.addEventListener('click', () => {
+            tokenModal.style.display = 'flex';
+        });
+
+        closeTokenModal.addEventListener('click', () => {
+            tokenModal.style.display = 'none';
+        });
+
+        confirmTokenPurchase.addEventListener('click', () => {
+            alert('Screenshot submitted for verification! Your token will be added after confirmation.');
+            tokenModal.style.display = 'none';
+        });
+
+        // Tab system
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const tabContents = document.querySelectorAll('.tab-content');
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
